@@ -1,6 +1,6 @@
 # CloudNetworking
 
-*Programming Assignments of University of Illinois at Urbana-Champaign(UIUC) Cloud Networking Course I studied on Coursera ([View Certificate](https://www.coursera.org/account/accomplishments/verify/4B59GYMW5GW8)) - November 2020*
+*Programming Assignments of University of Illinois at Urbana-Champaign(UIUC) Cloud Networking Course I studied on Coursera 
 
 ## Objectives
 
