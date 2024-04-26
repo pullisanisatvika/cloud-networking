@@ -80,8 +80,16 @@ class AdaptivePolicy(object):
         # to find the least utilized switch.
 
         # [REPLACE WITH YOUR CODE]
-#         return self.utilization.keys()[0]
-        return min(self.utilization, key=self.utilization.get)
+
+	#jlow = []
+	#for core in self.topo.coreSwitches.keys()
+	#    core.ukk	
+	
+	print "IN MY ASS 4 CODE"
+	print self.utlization
+	print "END OF DEBUG"
+
+        return self.utilization.keys()[0]
 
     def redistribute(self):
         # we're installing flows by destination, so sort by received
@@ -91,7 +99,7 @@ class AdaptivePolicy(object):
 
         # sort largest to smallest
         stats.sort(reverse=True)
-        
+
         # reset utilization
         for core in self.topo.coreSwitches.keys():
             self.utilization[core] = 0
@@ -106,7 +114,6 @@ class AdaptivePolicy(object):
 
         self.logger.info(self.utilization)
         self.logger.info(self.assignments)
-        
 
     def build(self, topo):
         routingTable = {}
@@ -176,23 +183,45 @@ class StaticPolicy(object):
 
         # [ADD YOUR CODE HERE]
         for edge in topo.edgeSwitches.values():
-            routingTable[edge.dpid] = []
-            for h in topo.hosts.values():
-                # h is connected to edge
-                if h.name in edge.neighbors:
+	    routingTable[edge.dpid]=[]
+	    for h in topo.hosts.values():
+		if h.name in edge.neighbors:
                     outport = topo.ports[edge.name][h.name]
-                else:  # choose right port to core
-                    vlanId = h.vlans[0]
-                    core = topo.getVlanCore(vlanId)
-                    outport = topo.ports[edge.name][core]
-                
-                # install routing policy when @outport is determined
+		    #print "OutportNeigh Set to: ", outport, "for edge", edge, "host", h.name
+		    #print "OUTPORT: ", outport
+                else:
+          	    outport = topo.ports[edge.name][topo.getVlanCore(h.vlans[0])] 
+  	            #if h.name in topo.vlans[0]:
+          	        #outport = topo.ports[edge.name][topo.getVlanCore(h.vlans[0])]
+          	        #outport = topo.ports[edge.name][topo.getVlanCore(0)]
+		        #print "Outport0 Set to: ", outport, "for edge:", edge, "host:", h.name
+		        #print "VLANS0: ", topo.vlans[0]
+			#print "VLANS0: ", topo.getVlanCore(0) 
+		        #print "EDGE Name", edge.name, h.name
+		        #print "HOST Name", h.name, h.vlans[0]
+		        #print "CORE0", core
+		        #print "PORTS0", topo.ports[edge.name][topo.getVlanCore(0)]
+		    #elif h.name in topo.vlans[1]:
+		        #print "VLANS1: ", topo.vlans[1]
+		        #print "VLANS1: ", topo.getVlanCore(1) 
+		        #print "EDGE.NEIGHBORS", edge.name, h.name, core
+		        #print "HOST Name", h.name, h.vlans
+		        #print "PORTS1", topo.ports.keys()
+		        #print "CORE1", core
+		        #print "PORTS1", topo.ports[edge.name][topo.getVlanCore(1)]
+          	        #outport = topo.ports[edge.name][topo.getVlanCore(1)]
+		        #print "Outport1 Set to: ", outport, "for edge:", edge, "host", h.name
+		        #print "OUTPORT: ", outport
+
+
                 routingTable[edge.dpid].append({
                     'eth_dst' : h.eth,
                     'output' : [outport],
                     'priority' : 2,
                     'type' : 'dst'
                 })
+
+        #print "Routing Table: ", routingTable
 
         return flood.add_arpflood(routingTable, topo)
 
@@ -219,6 +248,7 @@ class DefaultPolicy(object):
                 'type' : 'dst'
             })
 
+	# DEFAULT
         # create rules for packets from edge -> core (upward)
         for edge in topo.edgeSwitches.values():
             routingTable[edge.dpid] = []
